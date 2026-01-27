@@ -1,0 +1,23 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres:5432/financeflow}
+    username: ${SPRING_DATASOURCE_USERNAME:financeflow}
+    password: ${SPRING_DATASOURCE_PASSWORD:financeflow_secret}
+  jpa:
+    show-sql: false
+
+jwt:
+  secret: ${JWT_SECRET:eW91ci0yNTYtYml0LXNlY3JldC1rZXktZm9yLWRldmVsb3BtZW50LW9ubHktY2hhbmdlLWluLXByb2R1Y3Rpb24=}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when-authorized
+
+logging:
+  level:
+    com.financeflow: INFO
