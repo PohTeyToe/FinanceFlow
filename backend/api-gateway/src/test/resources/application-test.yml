@@ -1,0 +1,10 @@
+spring:
+  main:
+    web-application-type: reactive
+
+jwt:
+  secret: dGhpcy1pcy1hLXRlc3Qtc2VjcmV0LWtleS10aGF0LWlzLWxvbmctZW5vdWdoLWZvci1oczI1Ng==
+
+logging:
+  level:
+    root: WARN
