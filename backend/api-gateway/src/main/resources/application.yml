@@ -1,0 +1,156 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: api-gateway
+  main:
+    web-application-type: reactive
+  cloud:
+    gateway:
+      routes:
+        # Auth Service Routes
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: authServiceCircuitBreaker
+                fallbackUri: forward:/fallback/auth
+
+        # Account Service Routes
+        - id: account-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/api/accounts/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: accountServiceCircuitBreaker
+                fallbackUri: forward:/fallback/account
+
+        # Transaction Service Routes
+        - id: transaction-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/api/transactions/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: transactionServiceCircuitBreaker
+                fallbackUri: forward:/fallback/transaction
+
+        # Analytics Service Routes
+        - id: analytics-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/api/analytics/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: analyticsServiceCircuitBreaker
+                fallbackUri: forward:/fallback/analytics
+
+      # Global CORS Configuration
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            exposedHeaders:
+              - "X-Request-Id"
+            allowCredentials: true
+            maxAge: 3600
+
+      # Default filters for all routes
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_UNIQUE
+        - AddResponseHeader=X-Gateway-Version, 1.0.0
+
+# JWT Configuration
+jwt:
+  secret: ${JWT_SECRET:your-super-secret-jwt-key-that-is-at-least-256-bits-long}
+
+# Public paths that don't require authentication
+gateway:
+  public-paths:
+    - /api/auth/register
+    - /api/auth/login
+    - /api/auth/refresh
+    - /actuator/health
+
+# Circuit Breaker Configuration (Resilience4j)
+resilience4j:
+  circuitbreaker:
+    instances:
+      authServiceCircuitBreaker:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+      accountServiceCircuitBreaker:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+      transactionServiceCircuitBreaker:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+      analyticsServiceCircuitBreaker:
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 5s
+        failureRateThreshold: 50
+  timelimiter:
+    instances:
+      authServiceCircuitBreaker:
+        timeoutDuration: 10s
+      accountServiceCircuitBreaker:
+        timeoutDuration: 10s
+      transactionServiceCircuitBreaker:
+        timeoutDuration: 10s
+      analyticsServiceCircuitBreaker:
+        timeoutDuration: 10s
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,circuitbreakers,circuitbreakerevents
+  endpoint:
+    health:
+      show-details: when_authorized
+  health:
+    circuitbreakers:
+      enabled: true
+
+# Logging
+logging:
+  level:
+    root: INFO
+    com.financeflow.gateway: DEBUG
+    org.springframework.cloud.gateway: INFO
+    io.github.resilience4j: INFO

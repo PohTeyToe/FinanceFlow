@@ -1,0 +1,75 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        # Auth Service Routes
+        - id: auth-service
+          uri: ${AUTH_SERVICE_URL:http://auth-service:8081}
+          predicates:
+            - Path=/api/auth/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: authServiceCircuitBreaker
+                fallbackUri: forward:/fallback/auth
+
+        # Account Service Routes
+        - id: account-service
+          uri: ${ACCOUNT_SERVICE_URL:http://account-service:8082}
+          predicates:
+            - Path=/api/accounts/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: accountServiceCircuitBreaker
+                fallbackUri: forward:/fallback/account
+
+        # Transaction Service Routes
+        - id: transaction-service
+          uri: ${TRANSACTION_SERVICE_URL:http://transaction-service:8083}
+          predicates:
+            - Path=/api/transactions/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: transactionServiceCircuitBreaker
+                fallbackUri: forward:/fallback/transaction
+
+        # Analytics Service Routes
+        - id: analytics-service
+          uri: ${ANALYTICS_SERVICE_URL:http://analytics-service:8084}
+          predicates:
+            - Path=/api/analytics/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: analyticsServiceCircuitBreaker
+                fallbackUri: forward:/fallback/analytics
+
+      # CORS for Docker environment
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:3000"
+              - "http://frontend:3000"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - PATCH
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            exposedHeaders:
+              - "X-Request-Id"
+            allowCredentials: true
+            maxAge: 3600
+
+# Logging for Docker
+logging:
+  level:
+    root: INFO
+    com.financeflow.gateway: INFO
+    org.springframework.cloud.gateway: INFO
