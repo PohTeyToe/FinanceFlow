@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +45,7 @@ public class AnalyticsService {
     /**
      * Get spending breakdown by category
      */
+    @Cacheable(value = "spending-by-category", key = "#userId + '-' + #accountId + '-' + #startDate + '-' + #endDate")
     public SpendingByCategoryResponse getSpendingByCategory(
             UUID userId, 
             UUID accountId, 
@@ -109,6 +111,7 @@ public class AnalyticsService {
     /**
      * Get monthly spending trend
      */
+    @Cacheable(value = "monthly-trend", key = "#userId + '-' + #accountId + '-' + #months")
     public MonthlyTrendResponse getMonthlyTrend(UUID userId, UUID accountId, Integer months) {
         if (months == null || months < 1) {
             months = 6;
@@ -155,6 +158,7 @@ public class AnalyticsService {
     /**
      * Get account summary with insights
      */
+    @Cacheable(value = "account-summary", key = "#userId")
     public AccountSummaryResponse getAccountSummary(UUID userId) {
         // Get all user accounts
         List<Account> accounts = accountRepository.findByUserIdAndIsActiveTrue(userId);
@@ -229,6 +233,7 @@ public class AnalyticsService {
     /**
      * Get income vs expenses comparison
      */
+    @Cacheable(value = "income-vs-expenses", key = "#userId + '-' + #accountId + '-' + #startDate + '-' + #endDate")
     public IncomeVsExpensesResponse getIncomeVsExpenses(
             UUID userId, 
             UUID accountId, 
