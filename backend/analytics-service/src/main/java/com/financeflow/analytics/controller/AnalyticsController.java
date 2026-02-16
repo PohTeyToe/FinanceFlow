@@ -18,6 +18,8 @@ import com.financeflow.analytics.dto.MonthlyTrendResponse;
 import com.financeflow.analytics.dto.SpendingByCategoryResponse;
 import com.financeflow.analytics.service.AnalyticsService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/api/analytics")
 @RequiredArgsConstructor
+@Tag(name = "Analytics", description = "Spending insights, trends, and financial summaries")
 public class AnalyticsController {
 
     private final AnalyticsService analyticsService;

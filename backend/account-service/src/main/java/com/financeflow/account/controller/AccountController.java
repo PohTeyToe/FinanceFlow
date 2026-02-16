@@ -23,6 +23,8 @@ import com.financeflow.account.dto.CreateAccountRequest;
 import com.financeflow.account.dto.UpdateAccountRequest;
 import com.financeflow.account.service.AccountService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/accounts")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Accounts", description = "Account creation, retrieval, and management")
 public class AccountController {
 
     private final AccountService accountService;

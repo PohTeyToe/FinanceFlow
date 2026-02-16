@@ -34,6 +34,7 @@
         <lombok.version>1.18.30</lombok.version>
         <jjwt.version>0.12.3</jjwt.version>
         <jacoco.version>0.8.11</jacoco.version>
+        <springdoc.version>2.3.0</springdoc.version>
         <sonar.coverage.jacoco.xmlReportPaths>
             ${project.basedir}/../target/site/jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>

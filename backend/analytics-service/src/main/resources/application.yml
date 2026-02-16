@@ -33,6 +33,12 @@ jwt:
   # Base64 encoded secret key (must match auth-service)
   secret: ${JWT_SECRET:eW91ci0yNTYtYml0LXNlY3JldC1rZXktZm9yLWRldmVsb3BtZW50LW9ubHktY2hhbmdlLWluLXByb2R1Y3Rpb24=}
 
+springdoc:
+  api-docs:
+    path: /api/analytics/v3/api-docs
+  swagger-ui:
+    path: /api/analytics/swagger-ui.html
+
 logging:
   level:
     com.financeflow: DEBUG
