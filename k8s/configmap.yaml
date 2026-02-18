@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: financeflow-config
+  namespace: financeflow
+  labels:
+    app.kubernetes.io/part-of: financeflow
+data:
+  SPRING_PROFILES_ACTIVE: "docker"
+  SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/financeflow"
+  SPRING_DATASOURCE_USERNAME: "financeflow"
+  AUTH_SERVICE_URL: "http://auth-service:8081"
+  ACCOUNT_SERVICE_URL: "http://account-service:8082"
+  TRANSACTION_SERVICE_URL: "http://transaction-service:8083"
+  ANALYTICS_SERVICE_URL: "http://analytics-service:8084"
+  SPRING_REDIS_HOST: "redis"
+  SPRING_REDIS_PORT: "6379"
