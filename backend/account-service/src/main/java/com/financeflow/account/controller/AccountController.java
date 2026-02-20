@@ -38,9 +38,6 @@ public class AccountController {
 
     private final AccountService accountService;
 
-    /**
-     * List all accounts for the current user
-     */
     @GetMapping
     public ResponseEntity<List<AccountSummaryDto>> listAccounts(
             @AuthenticationPrincipal AuthenticatedUser user) {
@@ -49,9 +46,6 @@ public class AccountController {
         return ResponseEntity.ok(accounts);
     }
 
-    /**
-     * Get account details by ID
-     */
     @GetMapping("/{id}")
     public ResponseEntity<AccountDto> getAccount(
             @PathVariable UUID id,
@@ -61,9 +55,6 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
-    /**
-     * Create a new account
-     */
     @PostMapping
     public ResponseEntity<AccountDto> createAccount(
             @Valid @RequestBody CreateAccountRequest request,
@@ -73,9 +64,6 @@ public class AccountController {
         return ResponseEntity.status(HttpStatus.CREATED).body(account);
     }
 
-    /**
-     * Get account balance
-     */
     @GetMapping("/{id}/balance")
     public ResponseEntity<AccountBalanceResponse> getAccountBalance(
             @PathVariable UUID id,
@@ -85,9 +73,6 @@ public class AccountController {
         return ResponseEntity.ok(balance);
     }
 
-    /**
-     * Update account name
-     */
     @PutMapping("/{id}")
     public ResponseEntity<AccountDto> updateAccount(
             @PathVariable UUID id,
@@ -98,9 +83,6 @@ public class AccountController {
         return ResponseEntity.ok(account);
     }
 
-    /**
-     * Deactivate (soft delete) an account
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deactivateAccount(
             @PathVariable UUID id,

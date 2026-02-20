@@ -39,14 +39,11 @@ public class TransactionController {
 
     private final TransactionService transactionService;
 
-    /**
-     * List transactions for an account with optional filters
-     */
     @GetMapping
     public ResponseEntity<PagedResponse<TransactionDto>> listTransactions(
             @RequestParam UUID accountId,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "20") int size, // FIXME: hardcoded page size should be configurable
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
             @RequestParam(required = false) TransactionType type,
@@ -60,9 +57,6 @@ public class TransactionController {
         return ResponseEntity.ok(transactions);
     }
 
-    /**
-     * Get transaction details by ID
-     */
     @GetMapping("/{id}")
     public ResponseEntity<TransactionDto> getTransaction(
             @PathVariable UUID id,
@@ -73,9 +67,6 @@ public class TransactionController {
         return ResponseEntity.ok(transaction);
     }
 
-    /**
-     * Make a deposit
-     */
     @PostMapping("/deposit")
     public ResponseEntity<TransactionDto> deposit(
             @Valid @RequestBody DepositRequest request,
@@ -86,9 +77,6 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(transaction);
     }
 
-    /**
-     * Make a withdrawal
-     */
     @PostMapping("/withdraw")
     public ResponseEntity<TransactionDto> withdraw(
             @Valid @RequestBody WithdrawRequest request,
@@ -99,9 +87,6 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(transaction);
     }
 
-    /**
-     * Transfer between accounts
-     */
     @PostMapping("/transfer")
     public ResponseEntity<TransactionDto> transfer(
             @Valid @RequestBody TransferRequest request,

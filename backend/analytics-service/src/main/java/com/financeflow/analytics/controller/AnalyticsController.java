@@ -32,13 +32,6 @@ public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
 
-    /**
-     * Get spending breakdown by category
-     * 
-     * @param accountId Optional account ID (if not provided, aggregates all user accounts)
-     * @param startDate Optional start date (defaults to 30 days ago)
-     * @param endDate Optional end date (defaults to today)
-     */
     @GetMapping("/spending-by-category")
     public ResponseEntity<SpendingByCategoryResponse> getSpendingByCategory(
             @AuthenticationPrincipal AuthenticatedUser user,
@@ -55,12 +48,6 @@ public class AnalyticsController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get monthly spending trend
-     * 
-     * @param accountId Optional account ID (if not provided, aggregates all user accounts)
-     * @param months Number of months to retrieve (default: 6, max: 24)
-     */
     @GetMapping("/monthly-trend")
     public ResponseEntity<MonthlyTrendResponse> getMonthlyTrend(
             @AuthenticationPrincipal AuthenticatedUser user,
@@ -76,14 +63,6 @@ public class AnalyticsController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get account summary with insights
-     * Provides overall financial summary including:
-     * - Total balance across all accounts
-     * - This month's spending vs income
-     * - Comparison to last month
-     * - Top spending category
-     */
     @GetMapping("/summary")
     public ResponseEntity<AccountSummaryResponse> getAccountSummary(
             @AuthenticationPrincipal AuthenticatedUser user) {
@@ -95,13 +74,6 @@ public class AnalyticsController {
         return ResponseEntity.ok(response);
     }
 
-    /**
-     * Get income vs expenses comparison
-     * 
-     * @param accountId Optional account ID (if not provided, aggregates all user accounts)
-     * @param startDate Optional start date (defaults to 30 days ago)
-     * @param endDate Optional end date (defaults to today)
-     */
     @GetMapping("/income-vs-expenses")
     public ResponseEntity<IncomeVsExpensesResponse> getIncomeVsExpenses(
             @AuthenticationPrincipal AuthenticatedUser user,

@@ -45,9 +45,6 @@ public class TransactionService {
     // Counter for generating unique reference numbers
     private final AtomicLong referenceCounter = new AtomicLong(System.currentTimeMillis());
 
-    /**
-     * List transactions for an account with optional filters
-     */
     @Transactional(readOnly = true)
     public PagedResponse<TransactionDto> listTransactions(
             UUID accountId,
@@ -88,9 +85,6 @@ public class TransactionService {
         return PagedResponse.from(dtoPage);
     }
 
-    /**
-     * Get transaction details by ID
-     */
     @Transactional(readOnly = true)
     public TransactionDto getTransaction(UUID transactionId, UUID userId) {
         log.debug("Getting transaction {} for user {}", transactionId, userId);
@@ -104,9 +98,7 @@ public class TransactionService {
         return TransactionDto.fromEntity(transaction);
     }
 
-    /**
-     * Make a deposit to an account
-     */
+    // TODO: add audit logging for balance changes
     @Transactional
     public TransactionDto deposit(DepositRequest request, UUID userId) {
         log.info("Processing deposit of {} to account {} for user {}", 
@@ -140,9 +132,6 @@ public class TransactionService {
         return TransactionDto.fromEntity(savedTransaction);
     }
 
-    /**
-     * Make a withdrawal from an account
-     */
     @Transactional
     public TransactionDto withdraw(WithdrawRequest request, UUID userId) {
         log.info("Processing withdrawal of {} from account {} for user {}", 
@@ -185,9 +174,6 @@ public class TransactionService {
         return TransactionDto.fromEntity(savedTransaction);
     }
 
-    /**
-     * Transfer between accounts
-     */
     @Transactional
     public TransactionDto transfer(TransferRequest request, UUID userId) {
         log.info("Processing transfer of {} from account {} to account {} for user {}", 
@@ -272,18 +258,12 @@ public class TransactionService {
         return TransactionDto.fromEntity(savedOutTransaction);
     }
 
-    /**
-     * Verify account belongs to user
-     */
     private void verifyAccountOwnership(UUID accountId, UUID userId) {
         accountRepository.findByIdAndUserId(accountId, userId)
                 .filter(Account::getIsActive)
                 .orElseThrow(() -> new AccountNotFoundException(accountId));
     }
 
-    /**
-     * Generate unique reference number
-     */
     private String generateReferenceNumber() {
         int year = LocalDate.now().getYear();
         long counter = referenceCounter.incrementAndGet();

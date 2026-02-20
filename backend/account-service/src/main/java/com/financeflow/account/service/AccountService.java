@@ -30,9 +30,6 @@ public class AccountService {
     private final AccountRepository accountRepository;
     private final Random random = new Random();
 
-    /**
-     * List all active accounts for a user
-     */
     @Transactional(readOnly = true)
     public List<AccountSummaryDto> listAccounts(UUID userId) {
         log.debug("Listing accounts for user: {}", userId);
@@ -41,9 +38,6 @@ public class AccountService {
                 .collect(Collectors.toList());
     }
 
-    /**
-     * Get account details by ID (with ownership check)
-     */
     @Transactional(readOnly = true)
     public AccountDto getAccount(UUID accountId, UUID userId) {
         log.debug("Getting account {} for user {}", accountId, userId);
@@ -51,9 +45,6 @@ public class AccountService {
         return AccountDto.fromEntity(account);
     }
 
-    /**
-     * Create a new account for a user
-     */
     @Transactional
     public AccountDto createAccount(CreateAccountRequest request, UUID userId) {
         log.info("Creating {} account for user {}", request.getAccountType(), userId);
@@ -84,9 +75,6 @@ public class AccountService {
         return AccountDto.fromEntity(savedAccount);
     }
 
-    /**
-     * Get account balance
-     */
     @Transactional(readOnly = true)
     public AccountBalanceResponse getAccountBalance(UUID accountId, UUID userId) {
         log.debug("Getting balance for account {} user {}", accountId, userId);
@@ -94,9 +82,6 @@ public class AccountService {
         return AccountBalanceResponse.fromEntity(account);
     }
 
-    /**
-     * Update account name
-     */
     @Transactional
     public AccountDto updateAccount(UUID accountId, UpdateAccountRequest request, UUID userId) {
         log.info("Updating account {} for user {}", accountId, userId);
@@ -109,9 +94,7 @@ public class AccountService {
         return AccountDto.fromEntity(savedAccount);
     }
 
-    /**
-     * Deactivate an account (soft delete)
-     */
+    // TODO: implement account soft-delete instead of hard delete
     @Transactional
     public void deactivateAccount(UUID accountId, UUID userId) {
         log.info("Deactivating account {} for user {}", accountId, userId);
@@ -126,9 +109,6 @@ public class AccountService {
         log.info("Deactivated account {}", accountId);
     }
 
-    /**
-     * Find account by ID ensuring it belongs to the user
-     */
     private Account findAccountByIdAndUser(UUID accountId, UUID userId) {
         return accountRepository.findByIdAndUserId(accountId, userId)
                 .filter(Account::getIsActive)
@@ -140,27 +120,30 @@ public class AccountService {
      * Example: CHK-001-5839
      */
     private String generateAccountNumber(UUID userId, AccountType accountType) {
-        String prefix = accountType.getPrefix();
-        long userAccountCount = accountRepository.countByUserIdAndAccountType(userId, accountType);
-        String sequence = String.format("%03d", userAccountCount + 1);
-        
-        String accountNumber;
-        int attempts = 0;
-        do {
-            String randomPart = String.format("%04d", random.nextInt(10000));
-            accountNumber = String.format("%s-%s-%s", prefix, sequence, randomPart);
-            attempts++;
-            if (attempts > 100) {
-                throw new RuntimeException("Failed to generate unique account number after 100 attempts");
-            }
-        } while (accountRepository.existsByAccountNumber(accountNumber));
-        
-        return accountNumber;
+        try {
+            String prefix = accountType.getPrefix();
+            long userAccountCount = accountRepository.countByUserIdAndAccountType(userId, accountType);
+            String sequence = String.format("%03d", userAccountCount + 1);
+
+            String accountNumber;
+            int attempts = 0;
+            do {
+                String randomPart = String.format("%04d", random.nextInt(10000));
+                accountNumber = String.format("%s-%s-%s", prefix, sequence, randomPart);
+                attempts++;
+                if (attempts > 100) {
+                    throw new RuntimeException("Failed to generate unique account number after 100 attempts");
+                }
+            } while (accountRepository.existsByAccountNumber(accountNumber));
+
+            return accountNumber;
+        } catch (Exception e) {
+            // TODO: handle specific exceptions
+            log.error("Error generating account number for user {}", userId, e);
+            throw new RuntimeException("Account number generation failed", e);
+        }
     }
 
-    /**
-     * Generate default account name based on type
-     */
     private String generateDefaultAccountName(AccountType accountType) {
         return switch (accountType) {
             case CHECKING -> "Checking Account";
