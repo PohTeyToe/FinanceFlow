@@ -111,7 +111,14 @@ class TransactionControllerTest {
                     .andExpect(jsonPath("$.transactionType").value("DEPOSIT"))
                     .andExpect(jsonPath("$.amount").value(500.00))
                     .andExpect(jsonPath("$.balanceAfter").value(1500.00))
-                    .andExpect(jsonPath("$.status").value("COMPLETED"));
+                    .andExpect(jsonPath("$.currency").value("USD"))
+                    .andExpect(jsonPath("$.category").value("Income"))
+                    .andExpect(jsonPath("$.description").value("Salary"))
+                    .andExpect(jsonPath("$.referenceNumber").value("TXN-2024-001"))
+                    .andExpect(jsonPath("$.status").value("COMPLETED"))
+                    .andExpect(jsonPath("$.accountId").value(accountId.toString()))
+                    .andExpect(jsonPath("$.id").isNotEmpty())
+                    .andExpect(jsonPath("$.createdAt").isNotEmpty());
         }
 
         @Test
@@ -120,6 +127,33 @@ class TransactionControllerTest {
             DepositRequest request = DepositRequest.builder()
                     .accountId(accountId)
                     .amount(new BigDecimal("-100.00"))
+                    .build();
+
+            mockMvc.perform(post("/api/transactions/deposit")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should return 400 for zero deposit amount")
+        void shouldReturn400ForZeroAmount() throws Exception {
+            DepositRequest request = DepositRequest.builder()
+                    .accountId(accountId)
+                    .amount(BigDecimal.ZERO)
+                    .build();
+
+            mockMvc.perform(post("/api/transactions/deposit")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andExpect(status().isBadRequest());
+        }
+
+        @Test
+        @DisplayName("Should return 400 for missing account ID")
+        void shouldReturn400ForMissingAccountId() throws Exception {
+            DepositRequest request = DepositRequest.builder()
+                    .amount(new BigDecimal("100.00"))
                     .build();
 
             mockMvc.perform(post("/api/transactions/deposit")
@@ -163,7 +197,13 @@ class TransactionControllerTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.transactionType").value("WITHDRAWAL"))
-                    .andExpect(jsonPath("$.amount").value(100.00));
+                    .andExpect(jsonPath("$.amount").value(100.00))
+                    .andExpect(jsonPath("$.balanceAfter").value(900.00))
+                    .andExpect(jsonPath("$.currency").value("USD"))
+                    .andExpect(jsonPath("$.category").value("Shopping"))
+                    .andExpect(jsonPath("$.referenceNumber").value("TXN-2024-002"))
+                    .andExpect(jsonPath("$.status").value("COMPLETED"))
+                    .andExpect(jsonPath("$.accountId").value(accountId.toString()));
         }
 
         @Test
@@ -225,7 +265,14 @@ class TransactionControllerTest {
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isCreated())
                     .andExpect(jsonPath("$.transactionType").value("TRANSFER_OUT"))
-                    .andExpect(jsonPath("$.recipientAccountId").value(destAccountId.toString()));
+                    .andExpect(jsonPath("$.amount").value(200.00))
+                    .andExpect(jsonPath("$.balanceAfter").value(800.00))
+                    .andExpect(jsonPath("$.currency").value("USD"))
+                    .andExpect(jsonPath("$.description").value("Transfer to savings"))
+                    .andExpect(jsonPath("$.recipientAccountId").value(destAccountId.toString()))
+                    .andExpect(jsonPath("$.referenceNumber").value("TXN-2024-003-OUT"))
+                    .andExpect(jsonPath("$.status").value("COMPLETED"))
+                    .andExpect(jsonPath("$.accountId").value(accountId.toString()));
         }
     }
 
