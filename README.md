@@ -486,30 +486,52 @@ All endpoints are annotated with `@Operation` and `@Tag` from SpringDoc OpenAPI.
 <details>
 <summary><b>Running without Docker</b></summary>
 
+### Prerequisites
+
+- **Java 17** (verify: `java -version`)
+- **Maven 3.8+** (verify: `mvn -version`)
+- **Node.js 18+** and npm (verify: `node -v`)
+- **Docker** (needed for PostgreSQL and Redis, even when running services locally)
+
 ### Backend
 
 ```bash
-# Start only PostgreSQL
-docker compose up -d postgres
+# Start infrastructure services (PostgreSQL + Redis)
+docker compose up -d postgres redis
 
 # Build all services
 cd backend && mvn clean install -DskipTests
 
-# Run each service (separate terminals)
-cd auth-service && mvn spring-boot:run
-cd account-service && mvn spring-boot:run
-cd transaction-service && mvn spring-boot:run
-cd analytics-service && mvn spring-boot:run
-cd api-gateway && mvn spring-boot:run
+# Run each service (separate terminals, order matters)
+cd backend/auth-service && mvn spring-boot:run
+cd backend/account-service && mvn spring-boot:run
+cd backend/transaction-service && mvn spring-boot:run
+cd backend/analytics-service && mvn spring-boot:run
+cd backend/api-gateway && mvn spring-boot:run
 ```
+
+> **Note:** Start `auth-service` first -- other services depend on the JWT secret configuration being available.
 
 ### Frontend
 
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev    # Starts on http://localhost:5173 (Vite)
 ```
+
+The frontend proxies API requests to `localhost:8080` (the API Gateway).
+
+### Environment Variables
+
+Each service reads from `application.yml` with sensible defaults for local development. If you need to override:
+
+| Variable | Default | Description |
+|-|-|-|
+| `POSTGRES_HOST` | `localhost` | Database host |
+| `POSTGRES_PORT` | `5432` | Database port |
+| `JWT_SECRET` | (configured in yml) | Shared JWT signing key |
+| `REDIS_HOST` | `localhost` | Redis host |
 
 </details>
 
@@ -536,6 +558,39 @@ lsof -i :8080                 # macOS/Linux
 
 # Or stop all Docker containers
 docker compose down
+```
+</details>
+
+<details>
+<summary><b>Services fail to start or crash on boot</b></summary>
+
+Usually caused by PostgreSQL not being ready. Docker Compose uses health checks, but if services still fail:
+
+```bash
+# Check if postgres is healthy
+docker compose ps
+
+# View logs for a specific service
+docker compose logs auth-service
+
+# Restart just the failing service
+docker compose restart auth-service
+```
+
+If you see `Connection refused` errors, wait 10-15 seconds for PostgreSQL to finish initializing, then restart the affected service.
+</details>
+
+<details>
+<summary><b>Database schema issues or stale data</b></summary>
+
+The `init-db.sql` script runs automatically on first start. To reset the database:
+
+```bash
+# Stop everything and remove the database volume
+docker compose down -v
+
+# Restart -- this re-runs init-db.sql
+docker compose up --build
 ```
 </details>
 
