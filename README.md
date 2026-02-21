@@ -632,20 +632,21 @@ On the DevOps side, writing the Terraform modules for AWS (ECS Fargate, RDS, ALB
 
 ---
 
+## Known Issues
+
+- No integration tests between services — unit tests only, so inter-service contract issues aren't caught until runtime
+- Terraform state is stored locally (no S3 backend) — not suitable for team usage without remote state
+- K8s manifests tested on minikube only, not validated on EKS/GKE production clusters
+- Analytics queries run against the primary database — heavy reports can impact transaction throughput
+- No rate limiting on the API Gateway — vulnerable to abuse without external rate limiting (e.g., AWS WAF)
+
 ## Roadmap
 
-- [x] Auth Service with JWT & refresh tokens
-- [x] Account Service with CRUD operations
-- [x] Transaction Service with atomic transfers
-- [x] Analytics Service with aggregations
-- [x] API Gateway with circuit breakers
-- [x] React TypeScript frontend
-- [x] Docker Compose orchestration
-- [x] GitHub Actions CI/CD
-- [x] Swagger/OpenAPI documentation
-- [x] Redis caching layer
-- [x] Kubernetes deployment manifests
-- [x] Terraform AWS infrastructure
+- [ ] Integration test suite using Testcontainers for inter-service communication
+- [ ] Terraform remote state backend (S3 + DynamoDB locking)
+- [ ] Read replica for analytics queries to reduce primary database load
+- [ ] API rate limiting via Spring Cloud Gateway's built-in RequestRateLimiter filter
+- [ ] Event sourcing for transaction history (append-only audit log)
 
 ---
 
