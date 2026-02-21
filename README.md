@@ -618,6 +618,20 @@ On the DevOps side, writing the Terraform modules for AWS (ECS Fargate, RDS, ALB
 
 ---
 
+## Architecture Decisions
+
+- **Microservices over monolith** — Each service (Auth, Account, Transaction, Analytics) has independent deployment and scaling concerns. The Transaction service handles pessimistic locking that would block other operations in a monolith. Service isolation means a bug in Analytics can't crash the payment flow.
+
+- **Spring Cloud Gateway over Zuul/nginx** — Native Spring ecosystem integration with Resilience4j circuit breakers. Reactive programming model handles high connection counts without thread-per-request overhead. Built-in route predicates and filters reduce custom routing code.
+
+- **PostgreSQL over MySQL** — CTE (Common Table Expression) support for analytics aggregation queries. `SELECT FOR UPDATE` with proper row-level locking semantics for financial transactions. JSONB column support for flexible transaction metadata without schema changes.
+
+- **JWT with refresh token rotation** — Stateless authentication reduces database lookups on every request (only the Auth service hits the DB). Refresh token rotation with revoke-on-use prevents token replay attacks. Short-lived access tokens (15 min) limit the window of a stolen token.
+
+- **Pessimistic locking over optimistic** — Financial transactions cannot tolerate retry-based conflict resolution. A failed optimistic lock retry could show users incorrect balances mid-transaction. `SELECT FOR UPDATE` guarantees consistency at the cost of slightly higher latency — acceptable for a banking application.
+
+---
+
 ## Roadmap
 
 - [x] Auth Service with JWT & refresh tokens
