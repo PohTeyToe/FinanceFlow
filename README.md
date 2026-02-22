@@ -9,7 +9,7 @@
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**A full-stack microservices banking platform built with Spring Boot, React, and PostgreSQL.**
+**A microservices banking platform for managing accounts, transfers, and spending analytics.** Built to learn microservices architecture patterns -- service decomposition, API gateway routing, circuit breakers, and distributed auth -- using a realistic banking domain.
 
 [Live Demo](https://frontend-two-virid-21.vercel.app) | [Features](#features) | [Architecture](#architecture) | [Quick Start](#quick-start) | [API Reference](#api-reference) | [Tech Stack](#tech-stack)
 
