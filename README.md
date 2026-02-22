@@ -4,25 +4,37 @@
 
 ### Full-Stack Banking Platform
 
-[![CI/CD Pipeline](https://github.com/PohTeyToe/FinanceFlow/actions/workflows/ci.yml/badge.svg)](https://github.com/PohTeyToe/FinanceFlow/actions)
 [![Java](https://img.shields.io/badge/Java-17-ED8B00?style=flat&logo=openjdk&logoColor=white)](https://openjdk.org/)
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.2-6DB33F?style=flat&logo=springboot&logoColor=white)](https://spring.io/projects/spring-boot)
 [![React](https://img.shields.io/badge/React-18-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-15-4169E1?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
-[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
-[![Redis](https://img.shields.io/badge/Redis-7-DC382D?style=flat&logo=redis&logoColor=white)](https://redis.io/)
-[![Terraform](https://img.shields.io/badge/Terraform-AWS-844FBA?style=flat&logo=terraform&logoColor=white)](https://www.terraform.io/)
-[![Kubernetes](https://img.shields.io/badge/Kubernetes-Manifests-326CE5?style=flat&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 **A full-stack microservices banking platform built with Spring Boot, React, and PostgreSQL.**
 
-[Features](#features) • [Architecture](#architecture) • [Quick Start](#quick-start) • [API Reference](#api-reference) • [Tech Stack](#tech-stack)
+[Live Demo](https://frontend-two-virid-21.vercel.app) | [Features](#features) | [Architecture](#architecture) | [Quick Start](#quick-start) | [API Reference](#api-reference) | [Tech Stack](#tech-stack)
 
 ---
 
 </div>
+
+## Live Demo
+
+The application is deployed and accessible at the following URLs:
+
+| Service | URL |
+|-|-|
+| **Frontend** | https://frontend-two-virid-21.vercel.app |
+| **API Gateway** | https://financeflow-api-kkuw.onrender.com |
+| **Auth Service** | https://financeflow-auth.onrender.com |
+| **Account Service** | https://financeflow-account.onrender.com |
+| **Transaction Service** | https://financeflow-transaction.onrender.com |
+| **Analytics Service** | https://financeflow-analytics.onrender.com |
+
+**Demo credentials:** `john.doe@example.com` / `password123`
+
+> **Note:** Backend services are on Render's free tier and may take 30-60 seconds to wake up on first request.
+
+---
 
 ## Why I Built This
 
@@ -45,21 +57,6 @@ The pessimistic locking on balance updates was something I had to debug for hour
 | Analytics |
 |-----------|
 | ![Analytics](docs/screenshots/analytics.png) |
-
----
-
-## Skills Demonstrated
-
-| Domain | Technologies & Concepts |
-|--------|-------------------------|
-| **Backend** | Java 17, Spring Boot 3, Spring Security 6, JPA/Hibernate, REST APIs |
-| **Architecture** | Microservices, API Gateway, Circuit Breakers, Service Layer Pattern |
-| **Security** | JWT Authentication, Refresh Token Rotation, BCrypt Hashing, CORS |
-| **Frontend** | React 18, TypeScript, TanStack Query, Material UI, Recharts |
-| **Caching** | Redis 7, Spring Cache (@Cacheable), TTL-based eviction |
-| **DevOps** | Docker, Docker Compose, GitHub Actions CI/CD, Multi-stage Builds |
-| **Cloud/IaC** | Terraform (AWS ECS Fargate, RDS, ALB, VPC), Kubernetes manifests |
-| **Database** | PostgreSQL, Pessimistic Locking, Atomic Transactions, JPQL |
 
 ---
 
@@ -284,200 +281,45 @@ GET /api/analytics/income-vs-expenses    # Income comparison (Protected)
 
 ## Tech Stack
 
-<table>
-<tr>
-<td valign="top" width="50%">
-
-### Backend
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Java | 17 LTS | Core language |
-| Spring Boot | 3.2.x | Application framework |
-| Spring Security | 6.x | Authentication |
-| Spring Data JPA | 3.2.x | Data persistence |
-| Spring Cloud Gateway | 4.1.x | API Gateway |
-| Resilience4j | 2.x | Circuit breakers |
-| PostgreSQL | 15 | Database |
-| Lombok | 1.18.x | Boilerplate reduction |
-| JJWT | 0.12.x | JWT handling |
-| JUnit 5 | 5.x | Testing |
-| JaCoCo | 0.8.x | Code coverage |
-
-</td>
-<td valign="top" width="50%">
-
-### Frontend
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| React | 18.x | UI framework |
-| TypeScript | 5.x | Type safety |
-| Vite | 5.x | Build tool |
-| TanStack Query | 5.x | Server state |
-| React Router | 6.x | Routing |
-| Material UI | 5.x | Components |
-| Recharts | 2.x | Charts |
-| Axios | 1.x | HTTP client |
-
-### Caching
-
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| Redis | 7.x | Analytics caching |
-| Spring Cache | 3.2.x | Cache abstraction |
-
-### DevOps & Infrastructure
-
-| Technology | Purpose |
-|------------|---------|
-| Docker | Containerization |
-| Docker Compose | Orchestration |
-| GitHub Actions | CI/CD |
-| Nginx | Frontend serving |
-| Terraform | AWS IaC (ECS, RDS, ALB) |
-| Kubernetes | Container orchestration |
-
-</td>
-</tr>
-</table>
-
----
-
-## Project Structure
-
-```
-FinanceFlow/
-├── docker-compose.yml          # Full stack orchestration
-├── README.md
-│
-├── terraform/                  # AWS infrastructure (ECS, RDS, ALB, VPC)
-│   ├── main.tf
-│   ├── modules/
-│   │   ├── vpc/                # VPC, subnets, security groups
-│   │   ├── ecs/                # ECS Fargate, ECR, task definitions
-│   │   ├── rds/                # RDS PostgreSQL
-│   │   └── alb/                # Application Load Balancer
-│   └── environments/
-│
-├── k8s/                        # Kubernetes manifests
-│   ├── namespace.yaml
-│   ├── configmap.yaml
-│   ├── ingress.yaml
-│   ├── hpa.yaml
-│   └── {service}/              # Per-service deployment + service
-│
-├── backend/
-│   ├── pom.xml                 # Parent Maven POM
-│   ├── init-db.sql             # Schema + seed data (50+ transactions)
-│   │
-│   ├── api-gateway/            # Spring Cloud Gateway
-│   │   ├── filter/             # JWT validation, logging
-│   │   └── config/             # Routes, CORS, circuit breakers
-│   │
-│   ├── auth-service/           # Authentication microservice
-│   │   ├── controller/         # REST endpoints
-│   │   ├── service/            # JWT generation, user auth
-│   │   ├── model/              # User, RefreshToken entities
-│   │   └── config/             # Security configuration
-│   │
-│   ├── account-service/        # Account management
-│   │   ├── controller/         # CRUD endpoints
-│   │   ├── service/            # Business logic
-│   │   └── model/              # Account entity
-│   │
-│   ├── transaction-service/    # Transaction processing
-│   │   ├── controller/         # Deposit, withdraw, transfer
-│   │   ├── service/            # Atomic operations, locking
-│   │   └── model/              # Transaction entity
-│   │
-│   └── analytics-service/      # Spending analytics + Redis caching
-│       ├── controller/         # Analytics endpoints
-│       ├── service/            # Aggregation queries
-│       └── config/             # RedisConfig, cache management
-│
-└── frontend/
-    ├── src/
-    │   ├── components/         # Reusable UI components
-    │   │   ├── Layout/         # App shell, navigation
-    │   │   ├── Charts/         # Recharts visualizations
-    │   │   └── common/         # Loading, errors, guards
-    │   ├── pages/              # Route components
-    │   ├── hooks/              # Custom React hooks
-    │   ├── services/           # API layer
-    │   ├── context/            # Auth, theme providers
-    │   └── types/              # TypeScript definitions
-    ├── Dockerfile              # Multi-stage build
-    └── nginx.conf              # Production config
-```
+**Backend:** Java 17, Spring Boot 3.2, Spring Security 6, Spring Cloud Gateway, Spring Data JPA, PostgreSQL 15, Redis 7, Resilience4j
+**Frontend:** React 18, TypeScript 5, Vite, TanStack Query, Material UI, Recharts
+**DevOps:** Docker Compose, GitHub Actions CI/CD, Terraform (AWS ECS/RDS/ALB), Kubernetes manifests
 
 ---
 
 ## Testing
 
 ```bash
-# Run all backend tests
-cd backend && mvn test
-
-# Run with coverage report
-mvn test jacoco:report
-
-# Run frontend tests
-cd frontend && npm test
+cd backend && mvn test              # Run all backend tests
+mvn test jacoco:report              # With coverage report
 ```
-
-**Coverage Target:** 70%+ on business logic
 
 ---
 
-## Deployment Options
+## Deployment
 
-### Docker Compose (Local)
+### Frontend (Vercel)
+1. Connect the repository on [Vercel](https://vercel.com)
+2. Set root directory to `frontend`
+3. Set `VITE_API_URL` environment variable to your API Gateway URL
+4. Deploy
 
-The default setup using `docker compose up --build`. See [Quick Start](#quick-start).
+### Backend (Render)
+The microservices architecture requires multiple service instances. See `render.yaml` for the complete Blueprint configuration.
 
-### Kubernetes
+**Required services:** API Gateway, Auth, Account, Transaction, Analytics, PostgreSQL, Redis (7 total).
 
-Kubernetes manifests in the `k8s/` directory with Deployments, Services, ConfigMap, Secrets, Ingress, and HPA.
-
+### Local Development (recommended for demos)
 ```bash
-# Apply all manifests
-kubectl apply -f k8s/namespace.yaml
-kubectl apply -f k8s/
-
-# Verify pods are running
-kubectl get pods -n financeflow
+docker-compose up --build
+# Frontend: http://localhost:3000
+# API Gateway: http://localhost:8080
+# Demo login: john.doe@example.com / password123
 ```
 
-See [`k8s/README.md`](k8s/README.md) for full instructions.
-
-### AWS with Terraform
-
-Infrastructure-as-code in `terraform/` using ECS Fargate, RDS PostgreSQL, ALB, and VPC.
-
-```bash
-cd terraform
-terraform init
-terraform plan -var-file=environments/dev.tfvars
-terraform apply -var-file=environments/dev.tfvars
-```
-
-Estimated cost: ~$115/month for dev environment. See [`terraform/README.md`](terraform/README.md) for details.
-
----
-
-## API Documentation
-
-Each service exposes interactive Swagger UI documentation:
-
-| Service | Swagger UI URL |
-|-|-|
-| Auth Service | http://localhost:8081/api/auth/swagger-ui.html |
-| Account Service | http://localhost:8082/api/accounts/swagger-ui.html |
-| Transaction Service | http://localhost:8083/api/transactions/swagger-ui.html |
-| Analytics Service | http://localhost:8084/api/analytics/swagger-ui.html |
-
-All endpoints are annotated with `@Operation` and `@Tag` from SpringDoc OpenAPI.
+### Other Deployment Options
+- **Kubernetes:** Manifests in `k8s/` (Deployments, Services, ConfigMap, Ingress, HPA). See [`k8s/README.md`](k8s/README.md).
+- **AWS (Terraform):** ECS Fargate, RDS, ALB, VPC in `terraform/`. See [`terraform/README.md`](terraform/README.md).
 
 ---
 
@@ -486,52 +328,25 @@ All endpoints are annotated with `@Operation` and `@Tag` from SpringDoc OpenAPI.
 <details>
 <summary><b>Running without Docker</b></summary>
 
-### Prerequisites
-
-- **Java 17** (verify: `java -version`)
-- **Maven 3.8+** (verify: `mvn -version`)
-- **Node.js 18+** and npm (verify: `node -v`)
-- **Docker** (needed for PostgreSQL and Redis, even when running services locally)
-
-### Backend
+Requires Java 17, Maven 3.8+, Node.js 18+, and Docker (for PostgreSQL/Redis).
 
 ```bash
-# Start infrastructure services (PostgreSQL + Redis)
+# Start infrastructure
 docker compose up -d postgres redis
 
-# Build all services
+# Build and run backend (separate terminals, start auth-service first)
 cd backend && mvn clean install -DskipTests
-
-# Run each service (separate terminals, order matters)
 cd backend/auth-service && mvn spring-boot:run
 cd backend/account-service && mvn spring-boot:run
 cd backend/transaction-service && mvn spring-boot:run
 cd backend/analytics-service && mvn spring-boot:run
 cd backend/api-gateway && mvn spring-boot:run
+
+# Start frontend
+cd frontend && npm install && npm run dev
 ```
 
-> **Note:** Start `auth-service` first -- other services depend on the JWT secret configuration being available.
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-npm run dev    # Starts on http://localhost:5173 (Vite)
-```
-
-The frontend proxies API requests to `localhost:8080` (the API Gateway).
-
-### Environment Variables
-
-Each service reads from `application.yml` with sensible defaults for local development. If you need to override:
-
-| Variable | Default | Description |
-|-|-|-|
-| `POSTGRES_HOST` | `localhost` | Database host |
-| `POSTGRES_PORT` | `5432` | Database port |
-| `JWT_SECRET` | (configured in yml) | Shared JWT signing key |
-| `REDIS_HOST` | `localhost` | Redis host |
+Each service reads from `application.yml` with sensible defaults. Override with env vars: `POSTGRES_HOST`, `POSTGRES_PORT`, `JWT_SECRET`, `REDIS_HOST`.
 
 </details>
 
@@ -540,95 +355,25 @@ Each service reads from `application.yml` with sensible defaults for local devel
 ## Troubleshooting
 
 <details>
-<summary><b>"docker-compose is not recognized" (Windows)</b></summary>
+<summary><b>Common issues</b></summary>
 
-Use `docker compose` (with space) instead of `docker-compose`:
-```powershell
-docker compose up --build
-```
-</details>
+- **Windows:** Use `docker compose` (with space), not `docker-compose`
+- **Port conflict:** `docker compose down` to free ports, or check with `netstat -ano | findstr :8080`
+- **Service crash on boot:** Usually PostgreSQL isn't ready yet. Check `docker compose ps`, then `docker compose restart <service>`
+- **Stale data:** `docker compose down -v` removes volumes, then `docker compose up --build` re-runs init-db.sql
+- **Full reset:** `docker compose down -v --rmi local && docker compose up --build`
 
-<details>
-<summary><b>Port already in use</b></summary>
-
-```bash
-# Find process using port 8080
-netstat -ano | findstr :8080  # Windows
-lsof -i :8080                 # macOS/Linux
-
-# Or stop all Docker containers
-docker compose down
-```
-</details>
-
-<details>
-<summary><b>Services fail to start or crash on boot</b></summary>
-
-Usually caused by PostgreSQL not being ready. Docker Compose uses health checks, but if services still fail:
-
-```bash
-# Check if postgres is healthy
-docker compose ps
-
-# View logs for a specific service
-docker compose logs auth-service
-
-# Restart just the failing service
-docker compose restart auth-service
-```
-
-If you see `Connection refused` errors, wait 10-15 seconds for PostgreSQL to finish initializing, then restart the affected service.
-</details>
-
-<details>
-<summary><b>Database schema issues or stale data</b></summary>
-
-The `init-db.sql` script runs automatically on first start. To reset the database:
-
-```bash
-# Stop everything and remove the database volume
-docker compose down -v
-
-# Restart -- this re-runs init-db.sql
-docker compose up --build
-```
-</details>
-
-<details>
-<summary><b>Full reset</b></summary>
-
-```bash
-# Remove everything and rebuild
-docker compose down -v --rmi local
-docker compose up --build
-```
 </details>
 
 ---
 
 ## What I Learned
 
-Building this taught me that distributed transactions are way harder than they seem. The transfer endpoint needs to lock both accounts, update both balances, and create two transaction records atomically -- and if you get the lock ordering wrong, you deadlock. I spent a while figuring out that `@Lock(PESSIMISTIC_WRITE)` only works if you're consistent about which account you lock first.
+The transfer endpoint was the hardest part -- locking both accounts, updating balances, and creating two transaction records atomically. Getting the lock ordering wrong causes deadlocks, and `@Lock(PESSIMISTIC_WRITE)` only works if you're consistent about which account you lock first.
 
-The API Gateway was another area where I learned a lot by getting it wrong first. My initial approach had the gateway re-validating JWTs on every request by calling the auth service, which defeated the whole point of stateless tokens. Refactoring to validate the signature locally in a filter was a good lesson in understanding what "stateless" actually means.
+My initial API Gateway design re-validated JWTs by calling the auth service on every request, defeating the point of stateless tokens. Refactoring to validate signatures locally in a filter was a good lesson in what "stateless" actually means.
 
-Redis caching for the analytics endpoints was straightforward to add with `@Cacheable`, but figuring out when to invalidate was the real problem. Right now the TTLs are a compromise -- short enough that data stays reasonably fresh, long enough that the DB isn't hammered. It's not perfect but it works for the scale this runs at.
-
-On the DevOps side, writing the Terraform modules for AWS (ECS Fargate, RDS, ALB) taught me how much infrastructure config is really about networking and security groups. The actual service deployment was maybe 20% of the work -- the rest was VPC layout, subnet routing, and IAM policies.
-
----
-
-## Architecture Decisions
-
-- **Microservices over monolith** — Each service (Auth, Account, Transaction, Analytics) has independent deployment and scaling concerns. The Transaction service handles pessimistic locking that would block other operations in a monolith. Service isolation means a bug in Analytics can't crash the payment flow.
-
-- **Spring Cloud Gateway over Zuul/nginx** — Native Spring ecosystem integration with Resilience4j circuit breakers. Reactive programming model handles high connection counts without thread-per-request overhead. Built-in route predicates and filters reduce custom routing code.
-
-- **PostgreSQL over MySQL** — CTE (Common Table Expression) support for analytics aggregation queries. `SELECT FOR UPDATE` with proper row-level locking semantics for financial transactions. JSONB column support for flexible transaction metadata without schema changes.
-
-- **JWT with refresh token rotation** — Stateless authentication reduces database lookups on every request (only the Auth service hits the DB). Refresh token rotation with revoke-on-use prevents token replay attacks. Short-lived access tokens (15 min) limit the window of a stolen token.
-
-- **Pessimistic locking over optimistic** — Financial transactions cannot tolerate retry-based conflict resolution. A failed optimistic lock retry could show users incorrect balances mid-transaction. `SELECT FOR UPDATE` guarantees consistency at the cost of slightly higher latency — acceptable for a banking application.
+On the DevOps side, writing Terraform modules for AWS taught me that ~80% of infrastructure config is networking and security groups, not service deployment.
 
 ---
 
@@ -654,17 +399,3 @@ On the DevOps side, writing the Terraform modules for AWS (ECS Fargate, RDS, ALB
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
-
-<div align="center">
-
-### Let's Connect
-
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/abdallah-safi)
-[![Email](https://img.shields.io/badge/Email-Contact-EA4335?style=for-the-badge&logo=gmail&logoColor=white)](mailto:abdullahsf2001@gmail.com)
-
----
-
-**Built to learn microservices, distributed transactions, and cloud deployment**
-
-</div>
