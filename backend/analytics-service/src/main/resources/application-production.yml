@@ -1,0 +1,22 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME:financeflow}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+  jpa:
+    show-sql: false
+    hibernate:
+      ddl-auto: none
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+      - org.springframework.boot.autoconfigure.data.redis.RedisRepositoriesAutoConfiguration
+  cache:
+    type: simple
+
+jwt:
+  secret: ${JWT_SECRET}
+
+logging:
+  level:
+    com.financeflow: INFO

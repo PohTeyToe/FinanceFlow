@@ -14,7 +14,8 @@ COPY analytics-service ./analytics-service
 COPY api-gateway ./api-gateway
 
 # Build only this service and its dependencies
-RUN mvn clean package -DskipTests -pl api-gateway -am
+ENV MAVEN_OPTS="-Xmx512m -Xms256m"
+RUN mvn clean package -DskipTests -pl api-gateway -am -T 1
 
 # Runtime stage
 FROM eclipse-temurin:17-jre-alpine

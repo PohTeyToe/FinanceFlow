@@ -14,7 +14,8 @@ COPY analytics-service ./analytics-service
 COPY api-gateway ./api-gateway
 
 # Build only this service and its dependencies
-RUN mvn clean package -DskipTests -pl auth-service -am
+ENV MAVEN_OPTS="-Xmx512m -Xms256m"
+RUN mvn clean package -DskipTests -pl auth-service -am -T 1
 
 # Runtime stage
 FROM eclipse-temurin:17-jre-alpine
@@ -39,3 +40,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=3 \
     CMD wget --no-verbose --tries=1 --spider http://localhost:8081/actuator/health || exit 1
 
 ENTRYPOINT ["java", "-jar", "app.jar"]
+# Deploy trigger Mon, Mar  9, 2026  2:39:00 PM

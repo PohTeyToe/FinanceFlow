@@ -1,0 +1,66 @@
+databases:
+  - name: financeflow-db
+    plan: free
+    databaseName: financeflow
+    user: financeflow
+
+services:
+  - type: redis
+    name: financeflow-redis
+    plan: free
+    maxmemoryPolicy: allkeys-lru
+
+  - type: web
+    name: financeflow-gateway
+    runtime: docker
+    dockerfilePath: backend/api-gateway/Dockerfile
+    dockerContext: backend/api-gateway
+    plan: starter
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: AUTH_SERVICE_URL
+        value: https://financeflow-auth.onrender.com
+      - key: ACCOUNT_SERVICE_URL
+        value: https://financeflow-account.onrender.com
+      - key: TRANSACTION_SERVICE_URL
+        value: https://financeflow-transaction.onrender.com
+      - key: ANALYTICS_SERVICE_URL
+        value: https://financeflow-analytics.onrender.com
+
+  - type: web
+    name: financeflow-auth
+    runtime: docker
+    dockerfilePath: backend/auth-service/Dockerfile
+    dockerContext: backend/auth-service
+    plan: starter
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: production
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: financeflow-db
+          property: connectionURI
+      - key: JWT_SECRET
+        generateValue: true
+
+  - type: web
+    name: financeflow-account
+    runtime: docker
+    dockerfilePath: backend/account-service/Dockerfile
+    dockerContext: backend/account-service
+    plan: starter
+
+  - type: web
+    name: financeflow-transaction
+    runtime: docker
+    dockerfilePath: backend/transaction-service/Dockerfile
+    dockerContext: backend/transaction-service
+    plan: starter
+
+  - type: web
+    name: financeflow-analytics
+    runtime: docker
+    dockerfilePath: backend/analytics-service/Dockerfile
+    dockerContext: backend/analytics-service
+    plan: starter
