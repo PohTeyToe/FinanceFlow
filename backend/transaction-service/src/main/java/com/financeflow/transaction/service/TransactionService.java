@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -58,8 +59,14 @@ public class TransactionService {
     ) {
         log.debug("Listing transactions for account {} user {} page {} size {}", accountId, userId, page, size);
 
-        // Verify account belongs to user
-        verifyAccountOwnership(accountId, userId);
+        // Resolve account IDs: either verify specific account or get all user accounts
+        List<UUID> accountIds = null;
+        if (accountId != null) {
+            verifyAccountOwnership(accountId, userId);
+        } else {
+            List<Account> userAccounts = accountRepository.findAllByUserIdAndIsActiveTrue(userId);
+            accountIds = userAccounts.stream().map(Account::getId).toList();
+        }
 
         Pageable pageable = PageRequest.of(page, size);
 
@@ -73,6 +80,7 @@ public class TransactionService {
         // Build specification and execute query
         Specification<Transaction> spec = TransactionSpecification.withFilters(
                 accountId,
+                accountIds,
                 startInstant,
                 endInstant,
                 typeStr,

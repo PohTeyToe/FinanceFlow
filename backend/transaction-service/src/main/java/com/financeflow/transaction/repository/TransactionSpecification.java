@@ -2,6 +2,7 @@ package com.financeflow.transaction.repository;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -19,9 +20,10 @@ import jakarta.persistence.criteria.Predicate;
 public class TransactionSpecification {
 
     /**
-     * Build a specification for filtering transactions by account and optional criteria.
-     * 
-     * @param accountId Required account ID
+     * Build a specification for filtering transactions by account(s) and optional criteria.
+     *
+     * @param accountId Optional single account ID (if null, accountIds must be provided)
+     * @param accountIds Optional collection of account IDs (used when accountId is null)
      * @param startDate Optional start date filter
      * @param endDate Optional end date filter
      * @param type Optional transaction type filter
@@ -30,6 +32,7 @@ public class TransactionSpecification {
      */
     public static Specification<Transaction> withFilters(
             UUID accountId,
+            Collection<UUID> accountIds,
             Instant startDate,
             Instant endDate,
             String type,
@@ -38,8 +41,12 @@ public class TransactionSpecification {
         return (root, query, criteriaBuilder) -> {
             List<Predicate> predicates = new ArrayList<>();
 
-            // Account ID is required
-            predicates.add(criteriaBuilder.equal(root.get("accountId"), accountId));
+            // Filter by specific account or list of user's accounts
+            if (accountId != null) {
+                predicates.add(criteriaBuilder.equal(root.get("accountId"), accountId));
+            } else if (accountIds != null && !accountIds.isEmpty()) {
+                predicates.add(root.get("accountId").in(accountIds));
+            }
 
             // Optional start date filter
             if (startDate != null) {

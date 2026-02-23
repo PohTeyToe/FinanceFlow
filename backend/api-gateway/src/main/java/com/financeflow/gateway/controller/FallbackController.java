@@ -6,8 +6,8 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
@@ -17,25 +17,25 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/fallback")
 public class FallbackController {
 
-    @GetMapping("/auth")
+    @RequestMapping(value = "/auth", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.PATCH})
     public ResponseEntity<Map<String, Object>> authServiceFallback() {
         log.warn("Auth service circuit breaker triggered - returning fallback response");
         return buildFallbackResponse("Auth Service", "Authentication service is temporarily unavailable");
     }
 
-    @GetMapping("/account")
+    @RequestMapping(value = "/account", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.PATCH})
     public ResponseEntity<Map<String, Object>> accountServiceFallback() {
         log.warn("Account service circuit breaker triggered - returning fallback response");
         return buildFallbackResponse("Account Service", "Account service is temporarily unavailable");
     }
 
-    @GetMapping("/transaction")
+    @RequestMapping(value = "/transaction", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.PATCH})
     public ResponseEntity<Map<String, Object>> transactionServiceFallback() {
         log.warn("Transaction service circuit breaker triggered - returning fallback response");
         return buildFallbackResponse("Transaction Service", "Transaction service is temporarily unavailable");
     }
 
-    @GetMapping("/analytics")
+    @RequestMapping(value = "/analytics", method = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.PATCH})
     public ResponseEntity<Map<String, Object>> analyticsServiceFallback() {
         log.warn("Analytics service circuit breaker triggered - returning fallback response");
         return buildFallbackResponse("Analytics Service", "Analytics service is temporarily unavailable");

@@ -41,7 +41,7 @@ public class TransactionController {
 
     @GetMapping
     public ResponseEntity<PagedResponse<TransactionDto>> listTransactions(
-            @RequestParam UUID accountId,
+            @RequestParam(required = false) UUID accountId,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size, // FIXME: hardcoded page size should be configurable
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,

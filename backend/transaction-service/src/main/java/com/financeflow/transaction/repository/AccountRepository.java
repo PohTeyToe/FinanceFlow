@@ -22,6 +22,11 @@ public interface AccountRepository extends JpaRepository<Account, UUID> {
     Optional<Account> findByIdAndUserId(UUID id, UUID userId);
 
     /**
+     * Find all active accounts belonging to a user
+     */
+    java.util.List<Account> findAllByUserIdAndIsActiveTrue(UUID userId);
+
+    /**
      * Find account by ID (regardless of user) - for receiving transfers
      */
     Optional<Account> findByIdAndIsActiveTrue(UUID id);
