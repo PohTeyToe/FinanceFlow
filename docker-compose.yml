@@ -1,0 +1,168 @@
+version: '3.8'
+
+services:
+  # ===================
+  # DATABASE
+  # ===================
+  postgres:
+    image: postgres:15-alpine
+    container_name: financeflow-postgres
+    environment:
+      POSTGRES_USER: financeflow
+      POSTGRES_PASSWORD: financeflow_secret
+      POSTGRES_DB: financeflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U financeflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - financeflow-network
+
+  # ===================
+  # BACKEND SERVICES
+  # ===================
+  auth-service:
+    build:
+      context: ./backend
+      dockerfile: auth-service/Dockerfile
+    container_name: financeflow-auth
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/financeflow
+      SPRING_DATASOURCE_USERNAME: financeflow
+      SPRING_DATASOURCE_PASSWORD: financeflow_secret
+      JWT_SECRET: ${JWT_SECRET:-eW91ci1zdXBlci1zZWNyZXQtand0LWtleS10aGF0LWlzLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmc=}
+      JWT_EXPIRATION: 3600000
+    ports:
+      - "8081:8081"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - financeflow-network
+    restart: unless-stopped
+
+  account-service:
+    build:
+      context: ./backend
+      dockerfile: account-service/Dockerfile
+    container_name: financeflow-account
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/financeflow
+      SPRING_DATASOURCE_USERNAME: financeflow
+      SPRING_DATASOURCE_PASSWORD: financeflow_secret
+      AUTH_SERVICE_URL: http://auth-service:8081
+      JWT_SECRET: ${JWT_SECRET:-eW91ci1zdXBlci1zZWNyZXQtand0LWtleS10aGF0LWlzLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmc=}
+    ports:
+      - "8082:8082"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+    networks:
+      - financeflow-network
+    restart: unless-stopped
+
+  transaction-service:
+    build:
+      context: ./backend
+      dockerfile: transaction-service/Dockerfile
+    container_name: financeflow-transaction
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/financeflow
+      SPRING_DATASOURCE_USERNAME: financeflow
+      SPRING_DATASOURCE_PASSWORD: financeflow_secret
+      AUTH_SERVICE_URL: http://auth-service:8081
+      ACCOUNT_SERVICE_URL: http://account-service:8082
+      JWT_SECRET: ${JWT_SECRET:-eW91ci1zdXBlci1zZWNyZXQtand0LWtleS10aGF0LWlzLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmc=}
+    ports:
+      - "8083:8083"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      account-service:
+        condition: service_started
+    networks:
+      - financeflow-network
+    restart: unless-stopped
+
+  analytics-service:
+    build:
+      context: ./backend
+      dockerfile: analytics-service/Dockerfile
+    container_name: financeflow-analytics
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/financeflow
+      SPRING_DATASOURCE_USERNAME: financeflow
+      SPRING_DATASOURCE_PASSWORD: financeflow_secret
+      AUTH_SERVICE_URL: http://auth-service:8081
+      TRANSACTION_SERVICE_URL: http://transaction-service:8083
+      JWT_SECRET: ${JWT_SECRET:-eW91ci1zdXBlci1zZWNyZXQtand0LWtleS10aGF0LWlzLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmc=}
+    ports:
+      - "8084:8084"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      transaction-service:
+        condition: service_started
+    networks:
+      - financeflow-network
+    restart: unless-stopped
+
+  api-gateway:
+    build:
+      context: ./backend
+      dockerfile: api-gateway/Dockerfile
+    container_name: financeflow-gateway
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      AUTH_SERVICE_URL: http://auth-service:8081
+      ACCOUNT_SERVICE_URL: http://account-service:8082
+      TRANSACTION_SERVICE_URL: http://transaction-service:8083
+      ANALYTICS_SERVICE_URL: http://analytics-service:8084
+      JWT_SECRET: ${JWT_SECRET:-eW91ci1zdXBlci1zZWNyZXQtand0LWtleS10aGF0LWlzLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmc=}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - auth-service
+      - account-service
+      - transaction-service
+      - analytics-service
+    networks:
+      - financeflow-network
+    restart: unless-stopped
+
+  # ===================
+  # FRONTEND
+  # ===================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: financeflow-frontend
+    environment:
+      REACT_APP_API_URL: http://localhost:8080
+    ports:
+      - "3000:80"
+    depends_on:
+      - api-gateway
+    networks:
+      - financeflow-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  financeflow-network:
+    driver: bridge
