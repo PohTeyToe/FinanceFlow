@@ -25,6 +25,25 @@ services:
       - financeflow-network
 
   # ===================
+  # CACHING
+  # ===================
+  redis:
+    image: redis:7-alpine
+    container_name: financeflow-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes --maxmemory 128mb --maxmemory-policy allkeys-lru
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - financeflow-network
+
+  # ===================
   # BACKEND SERVICES
   # ===================
   auth-service:
@@ -109,12 +128,16 @@ services:
       TRANSACTION_SERVICE_URL: http://transaction-service:8083
       JWT_SECRET: ${JWT_SECRET:-eW91ci1zdXBlci1zZWNyZXQtand0LWtleS10aGF0LWlzLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmc=}
     ports:
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
       - "8084:8084"
     depends_on:
       postgres:
         condition: service_healthy
       transaction-service:
         condition: service_started
+      redis:
+        condition: service_healthy
     networks:
       - financeflow-network
     restart: unless-stopped
@@ -131,6 +154,8 @@ services:
       TRANSACTION_SERVICE_URL: http://transaction-service:8083
       ANALYTICS_SERVICE_URL: http://analytics-service:8084
       JWT_SECRET: ${JWT_SECRET:-eW91ci1zdXBlci1zZWNyZXQtand0LWtleS10aGF0LWlzLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmc=}
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
     ports:
       - "8080:8080"
     depends_on:
@@ -162,6 +187,7 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
 
 networks:
   financeflow-network:
