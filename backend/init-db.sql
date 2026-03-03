@@ -74,7 +74,9 @@ CREATE TABLE IF NOT EXISTS transactions (
     recipient_account_id UUID REFERENCES accounts(id),
     reference_number VARCHAR(50) UNIQUE,
     status VARCHAR(20) DEFAULT 'COMPLETED' CHECK (status IN ('PENDING', 'COMPLETED', 'FAILED', 'CANCELLED')),
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+    idempotency_key VARCHAR(64) UNIQUE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE INDEX idx_transactions_account ON transactions(account_id);

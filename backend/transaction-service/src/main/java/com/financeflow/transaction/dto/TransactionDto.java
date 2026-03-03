@@ -31,6 +31,7 @@ public class TransactionDto {
     private String referenceNumber;
     private TransactionStatus status;
     private Instant createdAt;
+    private Instant updatedAt;
 
     public static TransactionDto fromEntity(Transaction transaction) {
         return TransactionDto.builder()
@@ -46,6 +47,7 @@ public class TransactionDto {
                 .referenceNumber(transaction.getReferenceNumber())
                 .status(transaction.getStatus())
                 .createdAt(transaction.getCreatedAt())
+                .updatedAt(transaction.getUpdatedAt())
                 .build();
     }
 }
