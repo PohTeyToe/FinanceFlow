@@ -6,15 +6,26 @@ spring:
     name: api-gateway
   main:
     web-application-type: reactive
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+      timeout: 2000
   cloud:
     gateway:
       routes:
-        # Auth Service Routes
+        # Auth Service Routes (rate-limited to prevent brute force)
         - id: auth-service
           uri: http://localhost:8081
           predicates:
             - Path=/api/auth/**
           filters:
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 10
+                redis-rate-limiter.burstCapacity: 20
+                redis-rate-limiter.requestedTokens: 1
+                key-resolver: "#{@ipKeyResolver}"
             - name: CircuitBreaker
               args:
                 name: authServiceCircuitBreaker
@@ -71,6 +82,7 @@ spring:
               - "*"
             exposedHeaders:
               - "X-Request-Id"
+              - "X-Correlation-Id"
             allowCredentials: true
             maxAge: 3600
 
