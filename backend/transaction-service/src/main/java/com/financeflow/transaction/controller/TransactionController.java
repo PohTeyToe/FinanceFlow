@@ -24,6 +24,8 @@ import com.financeflow.transaction.dto.WithdrawRequest;
 import com.financeflow.transaction.model.TransactionType;
 import com.financeflow.transaction.service.TransactionService;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/api/transactions")
 @RequiredArgsConstructor
 @Slf4j
+@Tag(name = "Transactions", description = "Deposits, withdrawals, transfers, and transaction history")
 public class TransactionController {
 
     private final TransactionService transactionService;
