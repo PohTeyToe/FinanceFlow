@@ -28,14 +28,18 @@ public class LoggingFilter implements GlobalFilter, Ordered {
         String requestId = UUID.randomUUID().toString().substring(0, 8);
         long startTime = System.currentTimeMillis();
 
+        // Read correlation ID (set by CorrelationIdFilter which runs before this)
+        String correlationId = request.getHeaders().getFirst(CorrelationIdFilter.CORRELATION_ID_HEADER);
+
         // Add request ID to headers
         ServerHttpRequest mutatedRequest = request.mutate()
                 .header(REQUEST_ID_HEADER, requestId)
                 .build();
 
-        // Log incoming request
-        log.info("[{}] --> {} {} from {}",
+        // Log incoming request with correlation ID
+        log.info("[{}] [correlationId={}] --> {} {} from {}",
                 requestId,
+                correlationId,
                 request.getMethod(),
                 request.getPath().value(),
                 request.getRemoteAddress() != null ? request.getRemoteAddress().getAddress().getHostAddress() : "unknown"
@@ -49,8 +53,9 @@ public class LoggingFilter implements GlobalFilter, Ordered {
                     ServerHttpResponse response = exchange.getResponse();
                     long duration = System.currentTimeMillis() - startTime;
 
-                    log.info("[{}] <-- {} {} {} ({}ms)",
+                    log.info("[{}] [correlationId={}] <-- {} {} {} ({}ms)",
                             requestId,
+                            correlationId,
                             request.getMethod(),
                             request.getPath().value(),
                             response.getStatusCode() != null ? response.getStatusCode().value() : "unknown",
