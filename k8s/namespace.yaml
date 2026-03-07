@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: financeflow
+  labels:
+    app.kubernetes.io/name: financeflow
+    app.kubernetes.io/part-of: financeflow
