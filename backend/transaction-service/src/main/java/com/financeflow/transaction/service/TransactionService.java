@@ -106,7 +106,6 @@ public class TransactionService {
         return TransactionDto.fromEntity(transaction);
     }
 
-    // TODO: add audit logging for balance changes
     @Transactional
     public TransactionDto deposit(DepositRequest request, UUID userId) {
         log.info("Processing deposit of {} to account {} for user {}", 
@@ -183,9 +182,24 @@ public class TransactionService {
     }
 
     @Transactional
-    public TransactionDto transfer(TransferRequest request, UUID userId) {
-        log.info("Processing transfer of {} from account {} to account {} for user {}", 
-                request.getAmount(), request.getFromAccountId(), request.getToAccountId(), userId);
+    public TransactionDto transfer(TransferRequest request, UUID userId, String idempotencyKey) {
+        log.info("Processing transfer of {} from account {} to account {} for user {} (idempotencyKey={})",
+                request.getAmount(), request.getFromAccountId(), request.getToAccountId(), userId, idempotencyKey);
+
+        // Check idempotency key to prevent duplicate transfers
+        if (idempotencyKey != null && !idempotencyKey.isBlank()) {
+            return transactionRepository.findByIdempotencyKey(idempotencyKey)
+                    .map(existing -> {
+                        log.info("Duplicate transfer detected for idempotency key: {}", idempotencyKey);
+                        return TransactionDto.fromEntity(existing);
+                    })
+                    .orElseGet(() -> executeTransfer(request, userId, idempotencyKey));
+        }
+
+        return executeTransfer(request, userId, null);
+    }
+
+    private TransactionDto executeTransfer(TransferRequest request, UUID userId, String idempotencyKey) {
 
         if (request.getFromAccountId().equals(request.getToAccountId())) {
             throw new IllegalArgumentException("Cannot transfer to the same account");
@@ -239,6 +253,7 @@ public class TransactionService {
                 .recipientAccountId(destAccount.getId())
                 .referenceNumber(referenceNumber + "-OUT")
                 .status(TransactionStatus.COMPLETED)
+                .idempotencyKey(idempotencyKey)
                 .build();
 
         Transaction savedOutTransaction = transactionRepository.save(outTransaction);

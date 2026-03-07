@@ -30,8 +30,6 @@ public class AuthController {
 
     private final AuthService authService;
 
-    // TODO: add rate limiting to auth endpoints
-
     @Operation(summary = "Register a new user", description = "Creates a new user account and returns JWT tokens")
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {

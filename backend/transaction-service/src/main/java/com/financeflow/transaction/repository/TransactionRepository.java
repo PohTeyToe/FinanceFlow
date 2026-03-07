@@ -1,5 +1,6 @@
 package com.financeflow.transaction.repository;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.data.domain.Page;
@@ -27,4 +28,9 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID>,
      * Count transactions for an account
      */
     long countByAccountId(UUID accountId);
+
+    /**
+     * Find transaction by idempotency key to prevent duplicate processing
+     */
+    Optional<Transaction> findByIdempotencyKey(String idempotencyKey);
 }

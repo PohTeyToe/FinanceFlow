@@ -286,7 +286,7 @@ class TransactionServiceTest {
                         return t;
                     });
 
-            TransactionDto result = transactionService.transfer(request, userId);
+            TransactionDto result = transactionService.transfer(request, userId, null);
 
             assertThat(result.getTransactionType()).isEqualTo(TransactionType.TRANSFER_OUT);
             assertThat(result.getAmount()).isEqualByComparingTo("300.00");
@@ -308,7 +308,7 @@ class TransactionServiceTest {
                     .amount(new BigDecimal("100.00"))
                     .build();
 
-            assertThatThrownBy(() -> transactionService.transfer(request, userId))
+            assertThatThrownBy(() -> transactionService.transfer(request, userId, null))
                     .isInstanceOf(IllegalArgumentException.class)
                     .hasMessageContaining("same account");
         }
@@ -327,7 +327,7 @@ class TransactionServiceTest {
             when(accountRepository.findByIdWithLock(destAccountId))
                     .thenReturn(Optional.of(destAccount));
 
-            assertThatThrownBy(() -> transactionService.transfer(request, userId))
+            assertThatThrownBy(() -> transactionService.transfer(request, userId, null))
                     .isInstanceOf(InsufficientFundsException.class);
 
             verify(accountRepository, never()).save(any());
@@ -347,7 +347,7 @@ class TransactionServiceTest {
             when(accountRepository.findByIdWithLock(destAccountId))
                     .thenReturn(Optional.empty());
 
-            assertThatThrownBy(() -> transactionService.transfer(request, userId))
+            assertThatThrownBy(() -> transactionService.transfer(request, userId, null))
                     .isInstanceOf(AccountNotFoundException.class);
         }
     }

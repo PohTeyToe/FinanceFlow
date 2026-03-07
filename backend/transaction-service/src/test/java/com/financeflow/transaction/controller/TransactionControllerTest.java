@@ -2,6 +2,7 @@ package com.financeflow.transaction.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -257,7 +258,7 @@ class TransactionControllerTest {
                     .createdAt(Instant.now())
                     .build();
 
-            when(transactionService.transfer(any(TransferRequest.class), eq(userId)))
+            when(transactionService.transfer(any(TransferRequest.class), eq(userId), isNull()))
                     .thenReturn(response);
 
             mockMvc.perform(post("/api/transactions/transfer")
