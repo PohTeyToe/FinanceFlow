@@ -2,7 +2,7 @@
 
 # FinanceFlow
 
-### Enterprise-Grade Personal Banking Platform
+### Full-Stack Banking Platform
 
 [![CI/CD Pipeline](https://github.com/PohTeyToe/FinanceFlow/actions/workflows/ci.yml/badge.svg)](https://github.com/PohTeyToe/FinanceFlow/actions)
 [![Java](https://img.shields.io/badge/Java-17-ED8B00?style=flat&logo=openjdk&logoColor=white)](https://openjdk.org/)
@@ -16,7 +16,7 @@
 [![Kubernetes](https://img.shields.io/badge/Kubernetes-Manifests-326CE5?style=flat&logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**A full-stack microservices banking platform demonstrating enterprise Java patterns, secure authentication, and modern React development.**
+**A full-stack microservices banking platform built with Spring Boot, React, and PostgreSQL.**
 
 [Features](#features) • [Architecture](#architecture) • [Quick Start](#quick-start) • [API Reference](#api-reference) • [Tech Stack](#tech-stack)
 
@@ -26,17 +26,9 @@
 
 ## Why I Built This
 
-I created FinanceFlow to deepen my understanding of **enterprise Java development** and the patterns used in **financial technology**. After learning the fundamentals, I wanted to build something substantial that mirrors real-world banking systems - not just another CRUD app.
+I wanted to build something that goes beyond a basic CRUD app and actually deals with the kinds of problems you'd hit in a real banking system -- things like concurrent balance updates, atomic transfers, and keeping multiple services in sync.
 
-This project challenged me to implement:
-- **Microservices architecture** with proper service boundaries
-- **Secure authentication** with JWT and refresh token rotation
-- **Data integrity** with pessimistic locking and atomic transactions
-- **A complete CI/CD pipeline** with Docker and GitHub Actions
-- **Cloud infrastructure** with Terraform (AWS) and Kubernetes manifests
-- **Performance optimization** with Redis caching and TTL-based eviction
-
-Every line of code taught me something new about building production-grade software.
+The pessimistic locking on balance updates was something I had to debug for hours before getting right. Turns out it's easy to write a transfer endpoint that passes all your tests but breaks under concurrent load. I also underestimated how much work goes into a proper JWT auth flow with refresh token rotation -- the edge cases around token expiry and race conditions between tabs were tricky.
 
 ---
 
@@ -446,7 +438,7 @@ The default setup using `docker compose up --build`. See [Quick Start](#quick-st
 
 ### Kubernetes
 
-Production-ready manifests in the `k8s/` directory with Deployments, Services, ConfigMap, Secrets, Ingress, and HPA.
+Kubernetes manifests in the `k8s/` directory with Deployments, Services, ConfigMap, Secrets, Ingress, and HPA.
 
 ```bash
 # Apply all manifests
@@ -561,31 +553,13 @@ docker compose up --build
 
 ## What I Learned
 
-### Enterprise Java Development
-- Building RESTful microservices with **Spring Boot 3** and **Spring Security 6**
-- Implementing **JWT authentication** with refresh token rotation
-- Using **pessimistic locking** for concurrent balance updates
-- Creating **atomic transactions** for multi-account transfers
-- Writing comprehensive tests with **JUnit 5** and **MockMvc**
+Building this taught me that distributed transactions are way harder than they seem. The transfer endpoint needs to lock both accounts, update both balances, and create two transaction records atomically -- and if you get the lock ordering wrong, you deadlock. I spent a while figuring out that `@Lock(PESSIMISTIC_WRITE)` only works if you're consistent about which account you lock first.
 
-### Architecture & Patterns
-- Designing **microservices** with clear bounded contexts
-- Implementing **API Gateway** pattern with Spring Cloud Gateway
-- Using **circuit breakers** for resilience (Resilience4j)
-- Applying **DTO pattern** to separate domain from API contracts
+The API Gateway was another area where I learned a lot by getting it wrong first. My initial approach had the gateway re-validating JWTs on every request by calling the auth service, which defeated the whole point of stateless tokens. Refactoring to validate the signature locally in a filter was a good lesson in understanding what "stateless" actually means.
 
-### Caching & Performance
-- Implementing **Redis caching** with Spring Cache for analytics queries
-- Configuring **TTL-based eviction** and **LRU policies** for cache management
-- Using **@Cacheable** annotations for transparent caching at the service layer
+Redis caching for the analytics endpoints was straightforward to add with `@Cacheable`, but figuring out when to invalidate was the real problem. Right now the TTLs are a compromise -- short enough that data stays reasonably fresh, long enough that the DB isn't hammered. It's not perfect but it works for the scale this runs at.
 
-### DevOps & Cloud Infrastructure
-- **Containerizing** microservices with multi-stage Docker builds
-- Orchestrating services with **Docker Compose**
-- Setting up **CI/CD pipelines** with GitHub Actions
-- Achieving **code coverage** targets with JaCoCo
-- Writing **Terraform** modules for AWS infrastructure (ECS, RDS, ALB, VPC)
-- Creating **Kubernetes** manifests with health probes, HPA, and Ingress
+On the DevOps side, writing the Terraform modules for AWS (ECS Fargate, RDS, ALB) taught me how much infrastructure config is really about networking and security groups. The actual service deployment was maybe 20% of the work -- the rest was VPC layout, subnet routing, and IAM policies.
 
 ---
 
@@ -621,6 +595,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Built as a learning journey into enterprise Java development**
+**Built to learn microservices, distributed transactions, and cloud deployment**
 
 </div>

@@ -42,9 +42,7 @@ public class AnalyticsService {
 
     private static final ZoneId DEFAULT_ZONE = ZoneId.of("UTC");
 
-    /**
-     * Get spending breakdown by category
-     */
+    // TODO: cache invalidation strategy needs review
     @Cacheable(value = "spending-by-category", key = "#userId + '-' + #accountId + '-' + #startDate + '-' + #endDate")
     public SpendingByCategoryResponse getSpendingByCategory(
             UUID userId, 
@@ -108,9 +106,6 @@ public class AnalyticsService {
                 .build();
     }
 
-    /**
-     * Get monthly spending trend
-     */
     @Cacheable(value = "monthly-trend", key = "#userId + '-' + #accountId + '-' + #months")
     public MonthlyTrendResponse getMonthlyTrend(UUID userId, UUID accountId, Integer months) {
         if (months == null || months < 1) {
@@ -155,9 +150,6 @@ public class AnalyticsService {
                 .build();
     }
 
-    /**
-     * Get account summary with insights
-     */
     @Cacheable(value = "account-summary", key = "#userId")
     public AccountSummaryResponse getAccountSummary(UUID userId) {
         // Get all user accounts
@@ -230,9 +222,6 @@ public class AnalyticsService {
                 .build();
     }
 
-    /**
-     * Get income vs expenses comparison
-     */
     @Cacheable(value = "income-vs-expenses", key = "#userId + '-' + #accountId + '-' + #startDate + '-' + #endDate")
     public IncomeVsExpensesResponse getIncomeVsExpenses(
             UUID userId, 
@@ -280,9 +269,6 @@ public class AnalyticsService {
                 .build();
     }
 
-    /**
-     * Verify that the account belongs to the user
-     */
     private void verifyAccountOwnership(UUID accountId, UUID userId) {
         if (!accountRepository.existsByIdAndUserId(accountId, userId)) {
             log.warn("User {} attempted to access account {} which they don't own", userId, accountId);
@@ -290,9 +276,6 @@ public class AnalyticsService {
         }
     }
 
-    /**
-     * Safely convert Object to BigDecimal
-     */
     private BigDecimal toBigDecimal(Object value) {
         if (value == null) {
             return BigDecimal.ZERO;
