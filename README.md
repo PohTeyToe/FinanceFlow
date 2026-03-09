@@ -150,7 +150,7 @@ The pessimistic locking on balance updates was something I had to debug for hour
 
 | Pattern | Implementation |
 |---------|----------------|
-| **API Gateway** | Single entry point, JWT validation, rate limiting, circuit breakers |
+| **API Gateway** | Single entry point, JWT validation, circuit breakers, CORS |
 | **DTO Pattern** | Separate domain models from API contracts |
 | **Repository Pattern** | Abstract data access with Spring Data JPA |
 | **Service Layer** | Business logic encapsulation |
@@ -379,18 +379,12 @@ On the DevOps side, writing Terraform modules for AWS taught me that ~80% of inf
 
 ## Known Issues
 
-- No integration tests between services — unit tests only, so inter-service contract issues aren't caught until runtime
-- Terraform state is stored locally (no S3 backend) — not suitable for team usage without remote state
 - K8s manifests tested on minikube only, not validated on EKS/GKE production clusters
 - Analytics queries run against the primary database — heavy reports can impact transaction throughput
-- No rate limiting on the API Gateway — vulnerable to abuse without external rate limiting (e.g., AWS WAF)
 
 ## Roadmap
 
-- [ ] Integration test suite using Testcontainers for inter-service communication
-- [ ] Terraform remote state backend (S3 + DynamoDB locking)
 - [ ] Read replica for analytics queries to reduce primary database load
-- [ ] API rate limiting via Spring Cloud Gateway's built-in RequestRateLimiter filter
 - [ ] Event sourcing for transaction history (append-only audit log)
 
 ---
