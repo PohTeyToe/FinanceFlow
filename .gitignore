@@ -98,3 +98,12 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# ===================
+# TERRAFORM
+# ===================
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfplan
+.terraform.lock.hcl

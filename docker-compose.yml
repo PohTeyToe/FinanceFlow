@@ -127,9 +127,9 @@ services:
       AUTH_SERVICE_URL: http://auth-service:8081
       TRANSACTION_SERVICE_URL: http://transaction-service:8083
       JWT_SECRET: ${JWT_SECRET:-eW91ci1zdXBlci1zZWNyZXQtand0LWtleS10aGF0LWlzLWF0LWxlYXN0LTI1Ni1iaXRzLWxvbmc=}
-    ports:
       SPRING_DATA_REDIS_HOST: redis
       SPRING_DATA_REDIS_PORT: 6379
+    ports:
       - "8084:8084"
     depends_on:
       postgres:
