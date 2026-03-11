@@ -14,7 +14,7 @@ services:
     name: financeflow-gateway
     runtime: docker
     dockerfilePath: backend/api-gateway/Dockerfile
-    dockerContext: backend/api-gateway
+    dockerContext: backend
     plan: starter
     envVars:
       - key: SPRING_PROFILES_ACTIVE
@@ -32,7 +32,7 @@ services:
     name: financeflow-auth
     runtime: docker
     dockerfilePath: backend/auth-service/Dockerfile
-    dockerContext: backend/auth-service
+    dockerContext: backend
     plan: starter
     envVars:
       - key: SPRING_PROFILES_ACTIVE
@@ -48,19 +48,19 @@ services:
     name: financeflow-account
     runtime: docker
     dockerfilePath: backend/account-service/Dockerfile
-    dockerContext: backend/account-service
+    dockerContext: backend
     plan: starter
 
   - type: web
     name: financeflow-transaction
     runtime: docker
     dockerfilePath: backend/transaction-service/Dockerfile
-    dockerContext: backend/transaction-service
+    dockerContext: backend
     plan: starter
 
   - type: web
     name: financeflow-analytics
     runtime: docker
     dockerfilePath: backend/analytics-service/Dockerfile
-    dockerContext: backend/analytics-service
+    dockerContext: backend
     plan: starter

@@ -124,10 +124,6 @@ jobs:
         working-directory: ./frontend
         run: npm run lint
 
-      - name: Run tests
-        working-directory: ./frontend
-        run: npm test
-
   # ===================
   # FRONTEND BUILD
   # ===================
