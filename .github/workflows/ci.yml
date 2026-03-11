@@ -17,21 +17,6 @@ jobs:
   backend-test:
     name: Backend Tests
     runs-on: ubuntu-latest
-    
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_USER: financeflow
-          POSTGRES_PASSWORD: financeflow_secret
-          POSTGRES_DB: financeflow_test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
 
     steps:
       - name: Checkout code
@@ -47,10 +32,6 @@ jobs:
       - name: Run tests with Maven
         working-directory: ./backend
         run: mvn -B test --fail-at-end
-        env:
-          SPRING_DATASOURCE_URL: jdbc:postgresql://localhost:5432/financeflow_test
-          SPRING_DATASOURCE_USERNAME: financeflow
-          SPRING_DATASOURCE_PASSWORD: financeflow_secret
 
       - name: Generate coverage report
         working-directory: ./backend
