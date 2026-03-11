@@ -289,6 +289,8 @@ GET /api/analytics/income-vs-expenses    # Income comparison (Protected)
 
 ## Testing
 
+109 tests across 5 microservices (auth: 29, account: 23, transaction: 23, analytics: 19, gateway: 13).
+
 ```bash
 cd backend && mvn test              # Run all backend tests
 mvn test jacoco:report              # With coverage report
