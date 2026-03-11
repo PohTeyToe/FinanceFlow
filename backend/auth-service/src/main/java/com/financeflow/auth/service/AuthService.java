@@ -107,6 +107,9 @@ public class AuthService {
     }
 
     private AuthResponse generateAuthResponse(User user) {
+        // Revoke any existing refresh tokens for this user
+        refreshTokenRepository.revokeAllUserTokens(user.getId());
+
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
 
